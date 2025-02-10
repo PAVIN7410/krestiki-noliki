@@ -8,6 +8,12 @@ current_player = "X"
 buttons = []
 
 def check_winner():
+    filled_cells = 0
+    for i in range(3):
+        for j in range(3):
+            if buttons[i][j]["text"] != "":
+                filled_cells += 1
+
     for i in range(3):
         if buttons[i][0]["text"] == buttons[i][1]["text"] == buttons[i][2]["text"] != "":
             return True
@@ -17,6 +23,10 @@ def check_winner():
             return True
         if buttons[0][2]["text"] == buttons[1][1]["text"] == buttons[2][0]["text"] != "":
             return True
+        if filled_cells == 9:  # Проверка на ничью
+            messagebox.showinfo("Игра окончена", "Ничья!")
+            return None  # Возвращаем None для обозначения ничьей
+
     return False
 
 
@@ -27,8 +37,10 @@ def on_click(row, col):
     buttons[row][col]["text"]=current_player
 
      #Проверка на победу
-    if check_winner():
+    if check_winner() is True:
         messagebox.showinfo("Игра окончена", f"Игрок {current_player} победил!")
+    elif check_winner() is None:
+        return  # Ничья, ничего не делаем
 
     current_player = "O" if current_player == "X" else "X"             # переключение игроков
 
