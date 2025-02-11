@@ -15,7 +15,7 @@ def setup_game():
     window_color = random_color()
     window.configure(bg=window_color)
 
-    # Определяем цвета для X и O  
+    # Определяем цвета для X и O
     color_x = random_color([window_color])
     color_o = random_color([window_color, color_x])
 
