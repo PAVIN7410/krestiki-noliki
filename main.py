@@ -136,7 +136,7 @@ def on_click(row, col):
         buttons[row][col]["bg"] = color_o
 
     if check_winner() is True:
-        if player1_wins == 3:  
+        if player1_wins == 3:
             messagebox.showinfo("Победитель!", "Игрок 1 одержал 3 победы!")
             window.destroy()  # Закрываем окно после 3 побед
         elif player2_wins == 3:
