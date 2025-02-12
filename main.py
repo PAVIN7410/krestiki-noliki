@@ -19,19 +19,50 @@ def setup_game():
     color_x = random_color([window_color])
     color_o = random_color([window_color, color_x])
 
+def choose_symbol():
+    global current_player
+    choice_window = tk.Toplevel(window)
+    choice_window.title("Выбор символа")
+
+    tk.Label(choice_window, text="Выберите, чем будете играть:").pack(pady=10)
+
+    def set_symbol(symbol):
+        global current_player, player_symbol
+        current_player = symbol
+        player_symbol = symbol  # Сохраняем выбранный символ
+        choice_window.destroy()  # Закрываем окно выбора
+        setup_game()  # Настраиваем игру после выбора символа
+        create_buttons()  # Создание кнопок после выбора символа
+
+    tk.Button(choice_window, text="Крестик (X)", command=lambda: set_symbol("X")).pack(pady=5)
+    tk.Button(choice_window, text="Нолик (O)", command=lambda: set_symbol("O")).pack(pady=5)
+
 # Создаем основное окно
 window = tk.Tk()
 window.title("Крестики-нолики")
 window.geometry("300x350")
 
-setup_game()  # Настройка цветов на старт игры
+# Выбор символа перед началом игры
+choose_symbol()
 
-current_player = "X"
 buttons = []
 game_over = False  # Переменная для отслеживания состояния игры
 
 player1_wins = 0
 player2_wins = 0
+player_symbol = None  # Переменная для хранения выбранного символа игрока
+
+def create_buttons():
+    global buttons
+    buttons = []  # Сброс кнопок перед созданием нового игрового поля
+    for i in range(3):
+        row = []
+        for j in range(3):
+            btn = tk.Button(window, text="", font=("Arial", 20), width=5, height=2,
+                            command=lambda r=i, c=j: on_click(r, c), bg=window_color)
+            btn.grid(row=i, column=j)
+            row.append(btn)
+        buttons.append(row)
 
 def check_winner():
     global player1_wins, player2_wins, game_over
@@ -83,13 +114,14 @@ def check_winner():
 
 def reset_game():
     global current_player, game_over
-    current_player = "X"
     game_over = False  # Сбрасываем состояние игры
     setup_game()  # Обновляем цвета для новой игры
     for row in buttons:
         for button in row:
             button["text"] = ""
             button["bg"] = window_color  # Сбрасываем цвет кнопок на цвет окна
+
+    current_player = player_symbol  # Сохраняем выбор символа игрока
 
 def on_click(row, col):
     global current_player
@@ -104,7 +136,7 @@ def on_click(row, col):
         buttons[row][col]["bg"] = color_o
 
     if check_winner() is True:
-        if player1_wins == 3:
+        if player1_wins == 3:  
             messagebox.showinfo("Победитель!", "Игрок 1 одержал 3 победы!")
             window.destroy()  # Закрываем окно после 3 побед
         elif player2_wins == 3:
@@ -117,16 +149,6 @@ def on_click(row, col):
         return  # Ничья
 
     current_player = "O" if current_player == "X" else "X"  # Переключение игроков
-
-# Создание кнопок для игрового поля
-for i in range(3):
-    row = []
-    for j in range(3):
-        btn = tk.Button(window, text="", font=("Arial", 20), width=5, height=2,
-                        command=lambda r=i, c=j: on_click(r, c), bg=window_color)
-        btn.grid(row=i, column=j)
-        row.append(btn)
-    buttons.append(row)
 
 # Запуск основного цикла приложения
 window.mainloop()
